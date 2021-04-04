@@ -12,15 +12,22 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.web.WebView;
+import javafx.stage.FileChooser;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import rx.Observable;
 import rx.schedulers.Schedulers;
 
+import java.io.*;
 import java.net.URL;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import static com.sanvalero.countriesapp.util.Checkup.checkInteger;
 
@@ -45,6 +52,7 @@ public class AppController implements Initializable {
     private CountriesService countriesService;
     private ObservableList<Country> listCountries;
     private Country selectedCountry;
+    private File file;
 
     public AppController(){
         countriesService = new CountriesService();
@@ -136,6 +144,23 @@ public class AppController implements Initializable {
         listCountries.addAll(filterCountries);
     }
 
+    @FXML
+    public void exportToCSV(ActionEvent event){
+        exportListToCSV();
+    }
+
+    @FXML
+    public void exportToZIP(ActionEvent event){
+
+    }
+
+    private void chargeComboBox(){
+        String[] regions = new String[]{"Todos", "Africa", "Americas", "Asia", "Europe", "Oceania"};
+        cbRegions.setItems(FXCollections.observableArrayList(regions));
+        String[] filterCriteria = new String[]{">", "<", "="};
+        cbFilterCriteria.setItems(FXCollections.observableArrayList(filterCriteria));
+    }
+
     private void getAllCountries(){
         listCountries.clear();
         Task<Void> getAllCountriesTask = new Task<>() {
@@ -170,12 +195,45 @@ public class AppController implements Initializable {
         new Thread(getCountriesByRegionTask).start();
     }
 
-    private void chargeComboBox(){
-        String[] regions = new String[]{"Todos", "Africa", "Americas", "Asia", "Europe", "Oceania"};
-        cbRegions.setItems(FXCollections.observableArrayList(regions));
-        String[] filterCriteria = new String[]{">", "<", "="};
-        cbFilterCriteria.setItems(FXCollections.observableArrayList(filterCriteria));
+    private File exportListToCSV(){
+        try {
+            FileChooser fileChooser = new FileChooser();
+            file = fileChooser.showSaveDialog(lvListCountries.getScene().getWindow());
+
+            FileWriter fileWriter = new FileWriter(file);
+            CSVPrinter printer = new CSVPrinter(fileWriter, CSVFormat.DEFAULT);
+
+            for (Country country: listCountries){
+                printer.printRecord(country.getName(), country.getRegion(), country.getSubregion(), country.getCapital(),
+                        country.getPopulation(), country.getGini(), country.getFlag());
+            }
+            printer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return  file;
     }
 
+    private void zipFile(File file){
+        try {
+            FileOutputStream fos = new FileOutputStream("listCountries.zip");
+            ZipOutputStream zipOut = new ZipOutputStream(fos);
+            FileInputStream fis = new FileInputStream(file);
+            ZipEntry zipEntry = new ZipEntry(file.getName());
+            zipOut.putNextEntry(zipEntry);
+            byte[] bytes = new byte[1024];
+            int length;
+            while ((length = fis.read(bytes)) >= 0){
+                zipOut.write(bytes, 0, length);
+            }
+            zipOut.close();
+            fos.close();
+            fis.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

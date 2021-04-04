@@ -41,7 +41,6 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ProgressBar?>
-<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -52,39 +51,10 @@
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
-        <Menu mnemonicParsing="false" text="File">
+        <Menu mnemonicParsing="false" text="Opciones">
           <items>
-            <MenuItem mnemonicParsing="false" text="New" />
-            <MenuItem mnemonicParsing="false" text="Open…" />
-            <Menu mnemonicParsing="false" text="Open Recent" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Close" />
-            <MenuItem mnemonicParsing="false" text="Save" />
-            <MenuItem mnemonicParsing="false" text="Save As…" />
-            <MenuItem mnemonicParsing="false" text="Revert" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Preferences…" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Quit" />
-          </items>
-        </Menu>
-        <Menu mnemonicParsing="false" text="Edit">
-          <items>
-            <MenuItem mnemonicParsing="false" text="Undo" />
-            <MenuItem mnemonicParsing="false" text="Redo" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Cut" />
-            <MenuItem mnemonicParsing="false" text="Copy" />
-            <MenuItem mnemonicParsing="false" text="Paste" />
-            <MenuItem mnemonicParsing="false" text="Delete" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Select All" />
-            <MenuItem mnemonicParsing="false" text="Unselect All" />
-          </items>
-        </Menu>
-        <Menu mnemonicParsing="false" text="Help">
-          <items>
-            <MenuItem mnemonicParsing="false" text="About MyHelloApp" />
+            <MenuItem mnemonicParsing="false" onAction="#exportToCSV" text="Exportar a CSV" />
+            <MenuItem mnemonicParsing="false" onAction="#exportToZIP" text="Exportar a ZIP" />
           </items>
         </Menu>
       </menus>
@@ -162,9 +132,9 @@
                         </VBox>
                      </children>
                   </HBox>
-                  <HBox prefHeight="100.0" prefWidth="200.0">
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <Label text="Introduce población:">
+                        <Label text="Filtrar por población:">
                            <HBox.margin>
                               <Insets right="5.0" />
                            </HBox.margin>
@@ -185,14 +155,19 @@
                         <Insets top="25.0" />
                      </VBox.margin>
                   </HBox>
-                  <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <Button fx:id="btMoreInequality" mnemonicParsing="false" onAction="#orderByMoreInequalityFirst" text="Más desigualdad">
+                        <Label text="Ordenar por:">
+                           <HBox.margin>
+                              <Insets right="5.0" />
+                           </HBox.margin>
+                        </Label>
+                        <Button fx:id="btMoreInequality" mnemonicParsing="false" onAction="#orderByMoreInequalityFirst" text="Mayor desigualdad">
                            <HBox.margin>
                               <Insets right="25.0" />
                            </HBox.margin>
                         </Button>
-                        <Button fx:id="btLessInequality" mnemonicParsing="false" onAction="#orderByLeastInequalityFirst" text="Menos desigualdad" />
+                        <Button fx:id="btLessInequality" mnemonicParsing="false" onAction="#orderByLeastInequalityFirst" text="Menor desigualdad" />
                      </children>
                   </HBox>
                </children>
