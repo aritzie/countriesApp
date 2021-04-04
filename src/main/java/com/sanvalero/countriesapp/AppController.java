@@ -16,6 +16,7 @@ import rx.Observable;
 import rx.schedulers.Schedulers;
 
 import java.net.URL;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
@@ -30,13 +31,16 @@ public class AppController implements Initializable {
     public ComboBox<String> cbRegions;
     public Label lbName;
     public Label lbRegion;
-    public Label lbSubRegion;
+    public Label lbSubregion;
     public Label lbCapital;
     public Label lbPopulation;
+    public Label lbGini;
     public WebView wvFlag;
     public TextField tfPopulation;
     public Button btFilter;
     public ComboBox<String> cbFilterCriteria;
+    public Button btMoreInequality;
+    public Button btLessInequality;
 
     private CountriesService countriesService;
     private ObservableList<Country> listCountries;
@@ -75,9 +79,10 @@ public class AppController implements Initializable {
         selectedCountry = (Country) lvListCountries.getSelectionModel().getSelectedItem();
         lbName.setText(selectedCountry.getName());
         lbRegion.setText(selectedCountry.getRegion());
-//        lbSubRegion.setText(selectedCountry.getSubregion());
+        lbSubregion.setText(selectedCountry.getSubregion());
         lbCapital.setText(selectedCountry.getCapital());
         lbPopulation.setText(String.valueOf(selectedCountry.getPopulation()));
+        lbGini.setText(String.valueOf(selectedCountry.getGini()));
         wvFlag.getEngine().load(String.valueOf(selectedCountry.getFlag()));
     }
 
@@ -109,6 +114,24 @@ public class AppController implements Initializable {
                     .filter(country -> country.getPopulation()==population)
                     .collect(Collectors.toList());
         }
+        listCountries.clear();
+        listCountries.addAll(filterCountries);
+    }
+
+    @FXML
+    public void orderByLeastInequalityFirst(Event event){
+        List<Country> filterCountries = listCountries.stream()
+                .sorted(Comparator.comparingDouble(Country::getGini))
+                .collect(Collectors.toList());
+        listCountries.clear();
+        listCountries.addAll(filterCountries);
+    }
+
+    @FXML
+    public void orderByMoreInequalityFirst(Event event){
+        List<Country> filterCountries = listCountries.stream()
+                .sorted(Comparator.comparingDouble(Country::getGini).reversed())
+                .collect(Collectors.toList());
         listCountries.clear();
         listCountries.addAll(filterCountries);
     }

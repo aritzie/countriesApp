@@ -141,11 +141,23 @@
                                     <Insets bottom="5.0" />
                                  </VBox.margin>
                               </Label>
-                              <Label fx:id="lbPopulation" text="Label">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
+                              <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <Label fx:id="lbPopulation" text="Label">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <HBox.margin>
+                                          <Insets right="20.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                    <Label fx:id="lbGini" text="Label">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </HBox>
                            </children>
                         </VBox>
                      </children>
@@ -172,6 +184,16 @@
                      <VBox.margin>
                         <Insets top="25.0" />
                      </VBox.margin>
+                  </HBox>
+                  <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Button fx:id="btMoreInequality" mnemonicParsing="false" onAction="#orderByMoreInequalityFirst" text="Más desigualdad">
+                           <HBox.margin>
+                              <Insets right="25.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button fx:id="btLessInequality" mnemonicParsing="false" onAction="#orderByLeastInequalityFirst" text="Menos desigualdad" />
+                     </children>
                   </HBox>
                </children>
                <HBox.margin>
