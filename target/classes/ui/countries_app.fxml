@@ -42,9 +42,11 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.web.WebView?>
 
 <VBox prefHeight="560.0" prefWidth="793.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
   <children>
@@ -93,6 +95,11 @@
                <children>
                   <HBox prefHeight="116.0" prefWidth="306.0">
                      <children>
+                        <WebView fx:id="wvFlag" prefHeight="200.0" prefWidth="200.0">
+                           <HBox.margin>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </HBox.margin>
+                        </WebView>
                         <VBox alignment="TOP_CENTER" prefHeight="122.0" prefWidth="270.0">
                            <children>
                               <Label fx:id="lbName" text="Label">
@@ -143,6 +150,29 @@
                         </VBox>
                      </children>
                   </HBox>
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Label text="Introduce población:">
+                           <HBox.margin>
+                              <Insets right="5.0" />
+                           </HBox.margin>
+                        </Label>
+                        <TextField fx:id="tfPopulation">
+                           <HBox.margin>
+                              <Insets right="5.0" />
+                           </HBox.margin>
+                        </TextField>
+                        <ComboBox fx:id="cbFilterCriteria" prefHeight="26.0" prefWidth="41.0">
+                           <HBox.margin>
+                              <Insets right="5.0" />
+                           </HBox.margin>
+                        </ComboBox>
+                        <Button fx:id="btFilter" mnemonicParsing="false" onMouseClicked="#filterByPopulation" text="Filtrar" />
+                     </children>
+                     <VBox.margin>
+                        <Insets top="25.0" />
+                     </VBox.margin>
+                  </HBox>
                </children>
                <HBox.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -164,7 +194,7 @@
                         </Button>
                      </children>
                   </HBox>
-                  <ListView fx:id="lvListCountries" prefHeight="478.0" prefWidth="338.0">
+                  <ListView fx:id="lvListCountries" onMouseClicked="#showCountry" prefHeight="478.0" prefWidth="338.0">
                      <VBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </VBox.margin>
