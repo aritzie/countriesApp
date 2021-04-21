@@ -5,7 +5,6 @@ import com.sanvalero.countriesapp.service.CountriesService;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -34,7 +33,6 @@ import static com.sanvalero.countriesapp.util.Checkup.checkInteger;
 public class AppController implements Initializable {
 
     public ListView lvListCountries;
-    public ProgressBar pbProgress;
     public ComboBox<String> cbRegions;
     public Label lbName;
     public Label lbRegion;
@@ -48,6 +46,7 @@ public class AppController implements Initializable {
     public ComboBox<String> cbFilterCriteria;
     public Button btMoreInequality;
     public Button btLessInequality;
+    public ProgressIndicator piLoading;
 
     private CountriesService countriesService;
     private ObservableList<Country> listCountries;
@@ -63,10 +62,12 @@ public class AppController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         listCountries = FXCollections.observableArrayList();
         lvListCountries.setItems(listCountries);
-
         chargeComboBox();
+        piLoading.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
 
         getAllCountries();
+
+        wvFlag.setZoom(0.1);
     }
 
     @FXML
@@ -151,7 +152,8 @@ public class AppController implements Initializable {
 
     @FXML
     public void exportToZIP(ActionEvent event){
-
+        CompletableFuture.supplyAsync(() -> exportListToCSV())
+                .thenAcceptAsync(value -> zipFile(file));
     }
 
     private void chargeComboBox(){
@@ -163,60 +165,58 @@ public class AppController implements Initializable {
 
     private void getAllCountries(){
         listCountries.clear();
-        Task<Void> getAllCountriesTask = new Task<>() {
-            @Override
-            protected Void call() throws Exception {
+        piLoading.setVisible(true);
                 countriesService.getAllCountries()
                         .flatMap(Observable::from)
-                        .doOnCompleted(()->System.out.println("Terminado"))
+                        .doOnCompleted(() -> piLoading.setVisible(false))
                         .doOnError(throwable -> System.out.println(throwable.getMessage()))
                         .subscribeOn(Schedulers.from(Executors.newCachedThreadPool()))
                         .subscribe(country -> Platform.runLater(()->listCountries.add(country)));
-                return null;
-            }
-        };
-        new Thread(getAllCountriesTask).start();
     }
 
     private void getCountriesByRegion(String region){
         listCountries.clear();
-        Task<Void> getCountriesByRegionTask = new Task<>() {
-            @Override
-            protected Void call() throws Exception {
+        piLoading.setVisible(true);
                 countriesService.getCountriesByRegion(region)
                         .flatMap(Observable::from)
-                        .doOnCompleted(()-> System.out.println("Terminado"))
+                        .doOnCompleted(() -> piLoading.setVisible(false))
                         .doOnError(throwable -> System.out.println(throwable.getMessage()))
                         .subscribeOn(Schedulers.from(Executors.newCachedThreadPool()))
                         .subscribe(country -> Platform.runLater(()->listCountries.add(country)));
-                return null;
-            }
-        };
-        new Thread(getCountriesByRegionTask).start();
     }
 
     private File exportListToCSV(){
-        try {
-            FileChooser fileChooser = new FileChooser();
-            file = fileChooser.showSaveDialog(lvListCountries.getScene().getWindow());
 
-            FileWriter fileWriter = new FileWriter(file);
-            CSVPrinter printer = new CSVPrinter(fileWriter, CSVFormat.DEFAULT);
+        Platform.runLater(()->{
+            try {
+                FileChooser fileChooser = new FileChooser();
+                file = fileChooser.showSaveDialog(lvListCountries.getScene().getWindow());
 
-            for (Country country: listCountries){
-                printer.printRecord(country.getName(), country.getRegion(), country.getSubregion(), country.getCapital(),
-                        country.getPopulation(), country.getGini(), country.getFlag());
+                FileWriter fileWriter = new FileWriter(file);
+                CSVPrinter printer = new CSVPrinter(fileWriter, CSVFormat.DEFAULT);
+
+                for (Country country: listCountries){
+                    printer.printRecord(country.getName(),
+                            country.getRegion(),
+                            country.getSubregion(),
+                            country.getCapital(),
+                            country.getPopulation(),
+                            country.getGini(),
+                            country.getFlag());
+                }
+                printer.close();
+
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            printer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return  file;
+        });
+
+        return file;
     }
 
     private void zipFile(File file){
         try {
-            FileOutputStream fos = new FileOutputStream("listCountries.zip");
+            FileOutputStream fos = new FileOutputStream(file.getName() + ".zip");
             ZipOutputStream zipOut = new ZipOutputStream(fos);
             FileInputStream fis = new FileInputStream(file);
             ZipEntry zipEntry = new ZipEntry(file.getName());
@@ -235,5 +235,4 @@ public class AppController implements Initializable {
             e.printStackTrace();
         }
     }
-
 }
