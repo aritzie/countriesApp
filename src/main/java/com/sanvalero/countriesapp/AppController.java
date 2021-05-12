@@ -166,23 +166,23 @@ public class AppController implements Initializable {
     private void getAllCountries(){
         listCountries.clear();
         piLoading.setVisible(true);
-                countriesService.getAllCountries()
-                        .flatMap(Observable::from)
-                        .doOnCompleted(() -> piLoading.setVisible(false))
-                        .doOnError(throwable -> System.out.println(throwable.getMessage()))
-                        .subscribeOn(Schedulers.from(Executors.newCachedThreadPool()))
-                        .subscribe(country -> Platform.runLater(()->listCountries.add(country)));
+        countriesService.getAllCountries()
+                .flatMap(Observable::from)
+                .doOnCompleted(() -> piLoading.setVisible(false))
+                .doOnError(throwable -> System.out.println(throwable.getMessage()))
+                .subscribeOn(Schedulers.from(Executors.newCachedThreadPool()))
+                .subscribe(country -> Platform.runLater(()->listCountries.add(country)));
     }
 
     private void getCountriesByRegion(String region){
         listCountries.clear();
         piLoading.setVisible(true);
-                countriesService.getCountriesByRegion(region)
-                        .flatMap(Observable::from)
-                        .doOnCompleted(() -> piLoading.setVisible(false))
-                        .doOnError(throwable -> System.out.println(throwable.getMessage()))
-                        .subscribeOn(Schedulers.from(Executors.newCachedThreadPool()))
-                        .subscribe(country -> Platform.runLater(()->listCountries.add(country)));
+        countriesService.getCountriesByRegion(region)
+                .flatMap(Observable::from)
+                .doOnCompleted(() -> piLoading.setVisible(false))
+                .doOnError(throwable -> System.out.println(throwable.getMessage()))
+                .subscribeOn(Schedulers.from(Executors.newCachedThreadPool()))
+                .subscribe(country -> Platform.runLater(()->listCountries.add(country)));
     }
 
     private File exportListToCSV(){
